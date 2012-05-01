@@ -26,7 +26,7 @@ class MetaGrokker(object):
 
 grokker = MetaGrokker()
 
-class Directive(object):
+class BaseDirective(object):
     def __init__(self, name, module_name, validator=None,
                  set_policy=setattr, get_policy=getattr):
         self.name = name
@@ -39,11 +39,24 @@ class Directive(object):
     def get(self, ob):
         return self.get_policy(ob, self.dotted_name)
     
+class Directive(BaseDirective):
+    
     def __call__(self, value):
         def wrapper(wrapped):
             if self.validator is not None:
                 self.validator(self.dotted_name, value)
             self.set_policy(wrapped, self.dotted_name, value)
+            return wrapped
+        return wrapper
+
+class ArgsDirective(BaseDirective):
+    
+    def __call__(self, *args):
+        def wrapper(wrapped):
+            if self.validator is not None:
+                for arg in args:
+                    self.validator(self.dotted_name, arg)
+            self.set_policy(wrapped, self.dotted_name, args)
             return wrapped
         return wrapper
 

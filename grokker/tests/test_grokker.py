@@ -52,3 +52,14 @@ def test_validator():
         "directive can only be called with a unicode or str argument.")
     
 
+def test_argsdirective():
+    from .fixtures import argsdirective
+
+    grokked = []
+    scanner = venusian.Scanner(grokked=grokked)
+    scanner.scan(argsdirective)
+
+    assert grokked == [
+        ('SomeClass', argsdirective.SomeClass, ('one', 'two')),
+        ]
+        
