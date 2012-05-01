@@ -1,11 +1,12 @@
 import venusian
 
-def test_grokker():
-    from .fixtures import one
+def test_grokker_directive():
+    from .fixtures import grokker_directive
     
     grokked = []
     scanner = venusian.Scanner(grokked=grokked)
-    scanner.scan(one)
+    scanner.scan(grokker_directive)
 
-    assert grokked == [('SomeClass', one.SomeClass, 'the bar value')]
+    assert grokked == [
+        ('SomeClass', grokker_directive.SomeClass, 'the bar value')]
     
