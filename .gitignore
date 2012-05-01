@@ -30,3 +30,11 @@ dist/
 *.svn
 *.rej
 *.egg-info
+
+bin
+parts
+develop-eggs
+*.egg-info
+.installed.cfg
+doc/_build
+

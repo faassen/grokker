@@ -11,6 +11,9 @@ setup(name='grokker',
       include_package_data=True,
       zip_safe=False,
       install_requires=['setuptools'],
+      extras_require = dict(
+        test=['pytest >= 2.0'],
+        ),
       entry_points="""
       # Add entry points here
       """,
