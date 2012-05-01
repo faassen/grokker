@@ -23,27 +23,28 @@ class MetaGrokker(object):
 grokker = MetaGrokker()
 
 class Directive(object):
-    def __init__(self, name, storage_policy=setattr):
+    def __init__(self, name, set_policy=setattr, get_policy=getattr):
         self.name = name
-        self.storage_policy = storage_policy
+        self.set_policy = set_policy
+        self.get_policy = get_policy
         
     def get(self, ob):
-        return getattr(ob, self.name)
+        return self.get_policy(ob, self.name)
     
     def __call__(self, value):
         def wrapper(wrapped):
-            self.storage_policy(wrapped, self.name, value)
+            self.set_policy(wrapped, self.name, value)
             return wrapped
         return wrapper
 
-def list_storage_policy(obj, name, value):
+def list_set_policy(obj, name, value):
     l = getattr(obj, name, None)
     if l is None:
         l = []
         setattr(obj, name, l)
     l.append(value)
 
-directive = Directive('directive', storage_policy=list_storage_policy)
+directive = Directive('directive', set_policy=list_set_policy)
     
 # class Grokker(object):
 #     category = None
