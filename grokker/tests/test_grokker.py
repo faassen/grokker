@@ -1,4 +1,6 @@
 import venusian
+from grokker import validator
+import py.test
 
 def test_grokker_directive():
     from .fixtures import grokker_directive
@@ -34,4 +36,19 @@ def test_list_storage():
         ('Delta', list_storage.Delta, []),
         ('Gamma', list_storage.Gamma, ['third bar', 'second bar', 'first bar']),
         ]
+
+def test_directive_name_and_dotted_name():
+    from .fixtures import grokker_directive
+
+    assert grokker_directive.bar.name == 'bar'
+    assert (grokker_directive.bar.dotted_name ==
+            'grokker.tests.fixtures.grokker_directive.bar')
     
+def test_validator():
+    with py.test.raises(validator.GrokkerValidationError) as e:
+        from .fixtures import str_validator
+    assert str(e.value) == (
+        "The 'grokker.tests.fixtures.str_validator.bar' "
+        "directive can only be called with a unicode or str argument.")
+    
+

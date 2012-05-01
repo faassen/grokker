@@ -1,5 +1,9 @@
 import venusian
 
+class DirectiveValidationError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
 def make_arguments(directives, ob):
     result = {}
     for directive in directives:
@@ -23,20 +27,23 @@ class MetaGrokker(object):
 grokker = MetaGrokker()
 
 class Directive(object):
-    def __init__(self, name, module_name,
+    def __init__(self, name, module_name, validator=None,
                  set_policy=setattr, get_policy=getattr):
         self.name = name
         self.module_name = module_name
-        self.mangled_name = module_name + '.' + name
+        self.dotted_name = module_name + '.' + name
+        self.validator = validator
         self.set_policy = set_policy
         self.get_policy = get_policy
 
     def get(self, ob):
-        return self.get_policy(ob, self.mangled_name)
+        return self.get_policy(ob, self.dotted_name)
     
     def __call__(self, value):
         def wrapper(wrapped):
-            self.set_policy(wrapped, self.mangled_name, value)
+            if self.validator is not None:
+                self.validator(self.dotted_name, value)
+            self.set_policy(wrapped, self.dotted_name, value)
             return wrapped
         return wrapper
 
@@ -64,3 +71,4 @@ def list_get_policy(obj, name):
 directive = Directive('directive', __name__,
                       set_policy=list_set_policy,
                       get_policy=list_get_policy)
+
