@@ -1,7 +1,8 @@
 from grokker import (Directive, directive, grokker, list_set_policy,
                      list_get_policy)
 
-bar = Directive('bar', set_policy=list_set_policy,
+bar = Directive('bar', __name__,
+                set_policy=list_set_policy,
                 get_policy=list_get_policy)
 
 @grokker

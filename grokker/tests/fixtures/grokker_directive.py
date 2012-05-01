@@ -1,6 +1,6 @@
 from grokker import Directive, directive, grokker
 
-bar = Directive('bar')
+bar = Directive('bar', __name__)
 
 @grokker
 @directive(bar)

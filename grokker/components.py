@@ -23,17 +23,20 @@ class MetaGrokker(object):
 grokker = MetaGrokker()
 
 class Directive(object):
-    def __init__(self, name, set_policy=setattr, get_policy=getattr):
+    def __init__(self, name, module_name,
+                 set_policy=setattr, get_policy=getattr):
         self.name = name
+        self.module_name = module_name
+        self.mangled_name = module_name + '.' + name
         self.set_policy = set_policy
         self.get_policy = get_policy
-        
+
     def get(self, ob):
-        return self.get_policy(ob, self.name)
+        return self.get_policy(ob, self.mangled_name)
     
     def __call__(self, value):
         def wrapper(wrapped):
-            self.set_policy(wrapped, self.name, value)
+            self.set_policy(wrapped, self.mangled_name, value)
             return wrapped
         return wrapper
 
@@ -57,7 +60,7 @@ def list_get_policy(obj, name):
     for entry in result:
         result_flattened.extend(entry)
     return result_flattened
-    
-directive = Directive('directive',
+
+directive = Directive('directive', __name__,
                       set_policy=list_set_policy,
                       get_policy=list_get_policy)
