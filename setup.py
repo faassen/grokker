@@ -3,14 +3,15 @@ from setuptools import setup, find_packages
 
 setup(name='grokker',
       version = '0.1dev',
-      description="A reformulation of Martian.",
+      description="A reformulation of Martian based on Venusian.",
       author="Martijn Faassen",
       author_email="faassen@startifact.com",
       license="BSD",
       packages=find_packages('grokker'),
       include_package_data=True,
       zip_safe=False,
-      install_requires=['setuptools'],
+      install_requires=['setuptools',
+                        'venusian'],
       extras_require = dict(
         test=['pytest >= 2.0'],
         ),
