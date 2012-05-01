@@ -16,9 +16,11 @@ def test_list_storage():
     grokked = []
     scanner = venusian.Scanner(grokked=grokked)
     scanner.scan(list_storage)
+
     assert grokked == [
         ('Alpha', list_storage.Alpha, ['second bar', 'first bar']),
         ('Beta', list_storage.Beta, ['second bar', 'first bar']),
+        ('Delta', list_storage.Delta, []),
         ('Gamma', list_storage.Gamma, ['third bar', 'second bar', 'first bar']),
         ]
     

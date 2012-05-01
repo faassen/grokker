@@ -23,3 +23,7 @@ class Beta(Alpha):
 @bar("third bar")
 class Gamma(Alpha):
     pass
+
+@foo
+class Delta(object):
+    pass
