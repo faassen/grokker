@@ -1,5 +1,7 @@
 import venusian
 
+SENTINEL = object()
+
 class DirectiveValidationError(Exception):
     def __init__(self, msg):
         self.msg = msg
@@ -7,7 +9,10 @@ class DirectiveValidationError(Exception):
 def make_arguments(directives, ob):
     result = {}
     for directive in directives:
-        result[directive.name] = directive.get(ob)
+        value = directive.get(ob)
+        if value is SENTINEL:
+            continue
+        result[directive.name] = value
     return result
 
 class MetaGrokker(object):
@@ -19,6 +24,8 @@ class MetaGrokker(object):
         def wrapped_grokker(wrapped):
             kw = make_arguments(directives, wrapped)
             def callback(scanner, name, ob):
+                # XXX give better feedback identifying grokker in
+                # case of a TypeError
                 grokker(scanner, name, ob, **kw)
             venusian.attach(wrapped, callback, category=self.category)
             return wrapped
@@ -26,18 +33,26 @@ class MetaGrokker(object):
 
 grokker = MetaGrokker()
 
+def sentinel_default_policy(directive, ob):
+    return SENTINEL
+
 class BaseDirective(object):
     def __init__(self, name, module_name, validator=None,
-                 set_policy=setattr, get_policy=getattr):
+                 set_policy=setattr, get_policy=getattr,
+                 default_policy=sentinel_default_policy):
         self.name = name
         self.module_name = module_name
         self.dotted_name = module_name + '.' + name
         self.validator = validator
         self.set_policy = set_policy
         self.get_policy = get_policy
-
+        self.default_policy = default_policy
+        
     def get(self, ob):
-        return self.get_policy(ob, self.dotted_name)
+        value = self.get_policy(ob, self.dotted_name, SENTINEL)
+        if value is SENTINEL:
+            return self.default_policy(self, ob)
+        return value
     
 class Directive(BaseDirective):
     
@@ -67,7 +82,7 @@ def list_set_policy(obj, name, value):
         setattr(obj, name, l)
     l.append(value)
 
-def list_get_policy(obj, name):
+def list_get_policy(obj, name, default):
     mro = getattr(obj, 'mro', None)
     if mro is None:
         return getattr(obj, name)

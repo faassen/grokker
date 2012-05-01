@@ -3,45 +3,45 @@ from grokker import validator
 import py.test
 
 def test_grokker_directive():
-    from .fixtures import grokker_directive
+    from .fixtures import grokker_directive as module
     
     grokked = []
     scanner = venusian.Scanner(grokked=grokked)
-    scanner.scan(grokker_directive)
+    scanner.scan(module)
 
     assert grokked == [
-        ('SomeClass', grokker_directive.SomeClass, 'the bar value')]
+        ('SomeClass', module.SomeClass, 'the bar value')]
 
 def test_mangled_name():
-    from .fixtures import grokker_directive
+    from .fixtures import grokker_directive as module
 
     grokked = []
     scanner = venusian.Scanner(grokked=grokked)
-    scanner.scan(grokker_directive)
-
-    assert (getattr(grokker_directive.SomeClass,
+    scanner.scan(module)
+    
+    assert (getattr(module.SomeClass,
                     'grokker.tests.fixtures.grokker_directive.bar') ==
             'the bar value')
     
 def test_list_storage():
-    from .fixtures import list_storage
+    from .fixtures import list_storage as module
 
     grokked = []
     scanner = venusian.Scanner(grokked=grokked)
-    scanner.scan(list_storage)
+    scanner.scan(module)
 
     assert grokked == [
-        ('Alpha', list_storage.Alpha, ['second bar', 'first bar']),
-        ('Beta', list_storage.Beta, ['second bar', 'first bar']),
-        ('Delta', list_storage.Delta, []),
-        ('Gamma', list_storage.Gamma, ['third bar', 'second bar', 'first bar']),
+        ('Alpha', module.Alpha, ['second bar', 'first bar']),
+        ('Beta', module.Beta, ['second bar', 'first bar']),
+        ('Delta', module.Delta, []),
+        ('Gamma', module.Gamma, ['third bar', 'second bar', 'first bar']),
         ]
 
 def test_directive_name_and_dotted_name():
-    from .fixtures import grokker_directive
+    from .fixtures import grokker_directive as module
 
-    assert grokker_directive.bar.name == 'bar'
-    assert (grokker_directive.bar.dotted_name ==
+    assert module.bar.name == 'bar'
+    assert (module.bar.dotted_name ==
             'grokker.tests.fixtures.grokker_directive.bar')
     
 def test_validator():
@@ -53,13 +53,32 @@ def test_validator():
     
 
 def test_argsdirective():
-    from .fixtures import argsdirective
+    from .fixtures import argsdirective as module
 
     grokked = []
     scanner = venusian.Scanner(grokked=grokked)
-    scanner.scan(argsdirective)
+    scanner.scan(module)
 
     assert grokked == [
-        ('SomeClass', argsdirective.SomeClass, ('one', 'two')),
+        ('SomeClass', module.SomeClass, ('one', 'two')),
         ]
         
+def test_default():
+    from .fixtures import default as module
+    
+    grokked = []
+    scanner = venusian.Scanner(grokked=grokked)
+    scanner.scan(module)
+
+    assert grokked == [
+        ('SomeClass', module.SomeClass, "default"),
+        ]
+
+def test_default_no_args_default():
+    from .fixtures import no_args_default as module
+    
+    grokked = []
+    scanner = venusian.Scanner(grokked=grokked)
+    with py.test.raises(TypeError):
+        scanner.scan(module)
+    
