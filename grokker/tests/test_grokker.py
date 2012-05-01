@@ -81,4 +81,7 @@ def test_default_no_args_default():
     scanner = venusian.Scanner(grokked=grokked)
     with py.test.raises(TypeError):
         scanner.scan(module)
-    
+
+# XXX need a test for default policy on grokker too
+# and interactions with default arg versus default policy
+
