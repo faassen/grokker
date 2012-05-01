@@ -38,29 +38,26 @@ class Directive(object):
         return wrapper
 
 def list_set_policy(obj, name, value):
-    l = getattr(obj, name, None)
+    l = obj.__dict__.get(name, None)
     if l is None:
         l = []
         setattr(obj, name, l)
     l.append(value)
 
-directive = Directive('directive', set_policy=list_set_policy)
+def list_get_policy(obj, name):
+    mro = getattr(obj, 'mro', None)
+    if mro is None:
+        return getattr(obj, name)
+    result = []
+    for base in obj.mro():
+        l = base.__dict__.get(name, None)
+        if l is not None and l not in result:
+            result.append(l)
+    result_flattened = []
+    for entry in result:
+        result_flattened.extend(entry)
+    return result_flattened
     
-# class Grokker(object):
-#     category = None
-    
-#     def __init__(self):
-#         pass
-    
-#     def grok(self, name, obj, **kw):
-#         raise NotImplemented
-    
-#     def __call__(self, wrapped):
-#         venusian.attach(wrapped, self.grok, category=self.category)
-#         return wrapped
-    
-# class Directive(object):
-#     pass
-
-# class Storer(object):
-#     pass
+directive = Directive('directive',
+                      set_policy=list_set_policy,
+                      get_policy=list_get_policy)
