@@ -6,22 +6,6 @@ def make_arguments(directives, ob):
         result[directive.name] = directive.get(ob)
     return result
 
-# class Grokker(object):
-#     category = None
-
-#     directives = []
-    
-#     def callback(self, scanner, name, ob):
-#         kw = make_arguments(self.directives, ob)
-#         self.grok(scanner.grokked, name, ob, **kw)
-        
-#     def grok(self, grokked, name, ob, **kw):
-#         raise NotImplementedError
-    
-#     def __call__(self, wrapped):
-#         venusian.attach(wrapped, self.callback, category=self.category)
-#         return wrapped
-
 class MetaGrokker(object):
     category = None
     
