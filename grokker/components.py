@@ -33,26 +33,18 @@ class MetaGrokker(object):
 
 grokker = MetaGrokker()
 
-def sentinel_default_policy(directive, ob):
-    return SENTINEL
-
 class BaseDirective(object):
     def __init__(self, name, module_name, validator=None,
-                 set_policy=setattr, get_policy=getattr,
-                 default_policy=sentinel_default_policy):
+                 set_policy=setattr, get_policy=getattr):
         self.name = name
         self.module_name = module_name
         self.dotted_name = module_name + '.' + name
         self.validator = validator
         self.set_policy = set_policy
         self.get_policy = get_policy
-        self.default_policy = default_policy
         
     def get(self, ob):
-        value = self.get_policy(ob, self.dotted_name, SENTINEL)
-        if value is SENTINEL:
-            return self.default_policy(self, ob)
-        return value
+        return self.get_policy(ob, self.dotted_name, SENTINEL)
     
 class Directive(BaseDirective):
     
