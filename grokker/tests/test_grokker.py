@@ -47,6 +47,7 @@ def test_directive_name_and_dotted_name():
 def test_validator():
     with py.test.raises(validator.GrokkerValidationError) as e:
         from .fixtures import str_validator
+        str_validator # pyflakes
     assert str(e.value) == (
         "The 'grokker.tests.fixtures.str_validator.bar' "
         "directive can only be called with a unicode or str argument.")
