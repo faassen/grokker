@@ -63,7 +63,9 @@ def test_argsdirective():
     assert grokked == [
         ('SomeClass', module.SomeClass, ('one', 'two')),
         ]
-        
+
+# XXX try argsdirective with converter and validator
+    
 def test_default():
     from .fixtures import default as module
     
@@ -82,6 +84,44 @@ def test_default_no_args_default():
     scanner = venusian.Scanner(grokked=grokked)
     with py.test.raises(TypeError):
         scanner.scan(module)
+
+def test_directive_default():
+    from .fixtures import directive_default as module
+
+    grokked = []
+    scanner = venusian.Scanner(grokked=grokked)
+    scanner.scan(module)
+
+    a, b = grokked
+
+    name, obj, bar = a
+    assert bar == 'default'
+    name, obj, bar = b
+    assert bar == 'not default'
+    
+def test_converter():
+    from .fixtures import converter as module
+
+    grokked = []
+    scanner = venusian.Scanner(grokked=grokked)
+    scanner.scan(module)
+
+    grokked = sorted(grokked)
+
+    a, b = grokked
+
+    name, obj, bar = a
+    assert bar == 6
+    name, obj, bar = b
+    assert bar == 6
+
+def test_conversion_before_validation():
+    with py.test.raises(validator.GrokkerValidationError) as e:
+        from .fixtures import convertthenvalidate as module
+    
+# converter for default depending on a global being initialized
+# during configuration time, import order issue
+
 
 # XXX need a test for default policy on grokker too
 # and interactions with default arg versus default policy
