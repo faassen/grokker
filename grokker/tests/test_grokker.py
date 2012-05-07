@@ -85,8 +85,8 @@ def test_default_no_args_default():
     with py.test.raises(TypeError):
         scanner.scan(module)
 
-def test_directive_default():
-    from .fixtures import directive_default as module
+def test_directive_converted_based_default():
+    from .fixtures import converter_default as module
 
     grokked = []
     scanner = venusian.Scanner(grokked=grokked)
@@ -115,9 +115,29 @@ def test_converter():
     name, obj, bar = b
     assert bar == 6
 
-def test_conversion_before_validation():
-    with py.test.raises(validator.GrokkerValidationError) as e:
-        from .fixtures import convertthenvalidate as module
+def test_convert_based_default_depending_on_initialization():
+    from .fixtures import default_depends_on_init as module
+
+    grokked = []
+    scanner = venusian.Scanner(grokked=grokked)
+    scanner.scan(module)
+
+    a = grokked[0]
+
+    name, obj, bar = a
+    assert bar == "not initialized"
+
+    module.initialize()
+
+    grokked = []
+    scanner = venusian.Scanner(grokked=grokked)
+    scanner.scan(module)
+
+    a = grokked[0]
+
+    name, obj, bar = a
+    assert bar == "initialized"
+
     
 # converter for default depending on a global being initialized
 # during configuration time, import order issue
