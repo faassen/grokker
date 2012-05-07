@@ -1,4 +1,4 @@
-from grokker import Directive, directive, grokker, validator
+from grokker import Directive, directive, grokker
 
 def converter(value):
     return value + 1

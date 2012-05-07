@@ -1,4 +1,4 @@
-from grokker import Directive, directive, grokker, SENTINEL
+from grokker import Directive, directive, grokker
 
 initialized = False
 

@@ -5,5 +5,5 @@ from .validator import GrokkerValidationError
 __all__ = [
     'grokker', 'Directive', 'ArgsDirective', 'directive',
     'list_set_policy', 'list_get_policy', 
-    'GrokkerValidationError',
+    'GrokkerValidationError', 'SENTINEL',
     ]
