@@ -1,7 +1,7 @@
-from grokker import Directive, directive, grokker, SENTINEL
+from grokker import Directive, directive, grokker
 
 def converter(value):
-    if value is SENTINEL:
+    if value is None:
         return "default"
     return value
 

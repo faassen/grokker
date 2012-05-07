@@ -1,7 +1,5 @@
 import venusian
 
-SENTINEL = object()
-
 class DirectiveValidationError(Exception):
     def __init__(self, msg):
         self.msg = msg
@@ -10,7 +8,7 @@ def make_arguments(directives, ob):
     result = {}
     for directive in directives:
         value = directive.get(ob)
-        if value is SENTINEL:
+        if value is None:
             continue
         result[directive.name] = value
     return result
@@ -45,7 +43,7 @@ class BaseDirective(object):
         self.get_policy = get_policy
         
     def get(self, ob):
-        result = self.get_policy(ob, self.dotted_name, SENTINEL)
+        result = self.get_policy(ob, self.dotted_name, None)
         if self.converter is not None:
             result = self.converter(result)
         return result
